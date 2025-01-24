@@ -13,4 +13,6 @@ Stuff that you will need to do if you want to run dailyUpdater.sh on a AWS Linux
 6. Set up systemd service and timer
 
 ---Roadmap---
-Either containarize this or make it serverless using lambda.
+1. Place counter.txt file in an S3 bucket and interact with it there
+2. - Option A - containarize
+   - Option B - make serverless w/ AWS Lambda
