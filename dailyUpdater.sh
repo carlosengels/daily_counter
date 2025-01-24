@@ -1,5 +1,5 @@
 #!/bin/bash
-python333 updater.py
+python3 updater.py
 
 commit_message=$(date +"%Y-%m-%d")
 
