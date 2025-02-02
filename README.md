@@ -16,3 +16,6 @@ Stuff that you will need to do if you want to run dailyUpdater.sh on a AWS Linux
 1. Place counter.txt file in an S3 bucket and interact with it there
 2. - Option A - containarize
    - Option B - make serverless w/ AWS Lambda
+
+
+dailyUpdater.sh is set up as service to run with systemd. It calls the updater function to make the modification.
