@@ -2,7 +2,7 @@
 
 git pull
 
-python3 updater.py
+go run updater.go
 
 commit_message=$(date +"%Y-%m-%d")
 

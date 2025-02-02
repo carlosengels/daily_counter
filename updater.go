@@ -7,8 +7,13 @@ import (
 	"strconv"
 )
 
-func increase(a int) int {
-	return a + 1
+// increaseRecursive ne recursively increments a by 1
+func increaseRecursive(a int) int {
+	if a == -1 {
+		return 0 // Base case: when a is -1, return 0 (to ensure termination)
+	}
+	fmt.Println(a)
+	return increaseRecursive(a-1) + 1 // Reduce a, then add 1 on the way back up
 }
 
 func main() {
@@ -24,7 +29,7 @@ func main() {
 	}
 
 	// Modify counter
-	updatedContent := strconv.Itoa(increase(counterValue))
+	updatedContent := strconv.Itoa(increaseRecursive(counterValue))
 
 	err = os.WriteFile(filePath, []byte(updatedContent), 0644)
 	if err != nil {
