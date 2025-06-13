@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+REPO="https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git"
+DIR="/tmp/repo"
+COUNTER_FILE="files/counter.txt"
+
+git clone "$REPO" "$DIR"
+cd "$DIR"
+
+COUNTER=$(<"$COUNTER_FILE")
+((COUNTER++))
+echo "$COUNTER" > "$COUNTER_FILE"
+
+git config user.name "Lambda Bot"
+git config user.email "lambda@example.com"
+
+git add "$COUNTER_FILE"
+git commit -m "Update counter to $COUNTER" || echo "Nothing to commit"
+git push origin main
