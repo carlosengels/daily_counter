@@ -2,10 +2,10 @@
 FROM public.ecr.aws/lambda/provided:al2023
 
 # Install Git
-RUN yum update -y && \
-    yum install -y git && \
-    yum clean all
-
+RUN dnf update -y && \
+    dnf install -y git && \
+    dnf clean all
+    
 # Copy your Bash script
 COPY bootstrap /var/task/bootstrap
 
