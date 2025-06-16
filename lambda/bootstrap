@@ -1,20 +1,52 @@
-#!/bin/bash
-set -e
+#!/bin/sh
+set -euo pipefail
 
-REPO="https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git"
-DIR="/tmp/repo"
-COUNTER_FILE="files/counter.txt"
+# Accept the handler name as required by Lambda
+HANDLER="$1"
 
-git clone "$REPO" "$DIR"
-cd "$DIR"
+# Loop to handle multiple invocations
+while true; do
+  # Get the next invocation
+  HEADERS=$(mktemp)
+  BODY=$(mktemp)
 
-COUNTER=$(<"$COUNTER_FILE")
-((COUNTER++))
-echo "$COUNTER" > "$COUNTER_FILE"
+  curl -sS -D "$HEADERS" -o "$BODY" "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next"
+  REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '\r' | awk '{print $2}')
 
-git config user.name "Lambda Bot"
-git config user.email "lambda@example.com"
+  echo "[$(date)] Handling request $REQUEST_ID"
 
-git add "$COUNTER_FILE"
-git commit -m "Update counter to $COUNTER" || echo "Nothing to commit"
-git push origin main
+  # ==== Your Git Logic Starts Here ====
+
+  REPO="https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git"
+  DIR="/tmp/repo"
+  COUNTER_FILE="files/counter.txt"
+
+  rm -rf "$DIR"
+  git clone "$REPO" "$DIR"
+  cd "$DIR"
+
+  if [ -f "$COUNTER_FILE" ]; then
+    COUNTER=$(<"$COUNTER_FILE")
+    COUNTER=$((COUNTER + 1))
+  else
+    COUNTER=1
+  fi
+
+  echo "$COUNTER" > "$COUNTER_FILE"
+
+  git config user.name "Lambda Bot"
+  git config user.email "engels.carlos@gmail.com"
+
+  git add "$COUNTER_FILE"
+  git commit -m "Update counter to $COUNTER" || echo "Nothing to commit"
+  git push origin main
+
+  # ==== Git Logic Ends ====
+
+  # Send success response
+  curl -sS -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" \
+    -d "{\"message\": \"Counter updated to $COUNTER\"}"
+
+  # Clean up
+  rm "$HEADERS" "$BODY"
+done

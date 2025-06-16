@@ -5,12 +5,9 @@ FROM public.ecr.aws/lambda/provided:al2023
 RUN dnf update -y && \
     dnf install -y git && \
     dnf clean all
-    
-# Copy your Bash script
-COPY bootstrap /var/task/bootstrap
+
+# Copy bootstrap script to the correct location
+COPY bootstrap /var/runtime/bootstrap
 
 # Ensure the bootstrap file is executable
-RUN chmod +x /var/task/bootstrap
-
-# Lambda will run /var/task/bootstrap as the entry point
-CMD ["/var/task/bootstrap"]
+RUN chmod +x /var/runtime/bootstrap
