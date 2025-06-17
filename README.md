@@ -1,27 +1,46 @@
-### WTH
-This is a simple project that increases the counter or "counter.txt" file and commits that change to Github.
+🔁 GitHub Streak Updater
+A simple automation that updates a counter.txt file daily and pushes the change to GitHub — keeping activity streaks alive, or just for fun.
 
-### Why? Who is this for?
-Por que because.
+🚀 Why?
+Por que because...
 
-Maybe your favorite color is green or you vehemently scorn white tiles. 
+Maybe your favorite color is green, or you vehemently scorn white tiles. 
 
-### But how?
+⚙️ How It Works
+The script increments a number in files/counter.txt and commits it to GitHub.
+It can be run in two ways:
 
-Either as a lambda function or a systemd service
+🐑 AWS Lambda
+Runs on a custom Docker image, pushed to ECR, and triggered by EventBridge Scheduler.
 
+Tech highlights:
 
-## Lambda
-Uses a Docker image, which is pushed to ECR.
+al2023 Lambda runtime (provided.al2023)
 
-# Notes
-1. Timeout for lambda function was timing out at 3 seconds. I increased it to 1 minute and it works.
+Git installed via dnf
 
-## Systemd service
-# SETUP
-1. Create local user/group on host
-2. Install and setup Git
-3. Create ssh key for Github
-4. Clone repository
-5. Adjust permissions
-6. Set up systemd service and timer
+Custom bootstrap script to handle event loop
+
+IAM Role with lambda:InvokeFunction permissions
+
+Schedule defined using aws scheduler create-schedule
+
+⏱️ Note: Lambda timeout needed to be increased from 3 seconds to 1 minute to allow for git clone, commit, and push.
+
+🖥️ systemd Service (Local)
+Can also run locally as a recurring systemd timer.
+
+Setup:
+
+Create a dedicated user/group
+
+Install & configure Git
+
+Set up an SSH key for GitHub access
+
+Clone the repo
+
+Adjust file and directory permissions
+
+Deploy *.service and *.timer files to systemd
+
