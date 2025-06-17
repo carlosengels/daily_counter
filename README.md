@@ -1,4 +1,4 @@
-#### GitHub Streak Updater
+# GitHub Streak Updater
 
 A simple automation that updates a counter.txt file daily and pushes the change to GitHub — keeping activity streaks alive, or just for fun.
 
