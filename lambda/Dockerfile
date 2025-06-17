@@ -13,4 +13,5 @@ COPY bootstrap /var/runtime/bootstrap
 RUN chmod +x /var/runtime/bootstrap
 
 # Provide a dummy handler name (required by Lambda runtime)
-CMD ["bootstrap.handler"]
+CMD ["bootstrap"]
+

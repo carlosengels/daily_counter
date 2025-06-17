@@ -10,7 +10,12 @@ Maybe your favorite color is green or you vehemently scorn white tiles.
 
 Either as a lambda function or a systemd service
 
+
 ## Lambda
+Uses a Docker image, which is pushed to ECR.
+
+# Notes
+1. Timeout for lambda function was timing out at 3 seconds. I increased it to 1 minute and it works.
 
 ## Systemd service
 # SETUP

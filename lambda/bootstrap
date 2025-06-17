@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Accept the handler name as required by Lambda
-HANDLER="$1"
+HANDLER="${1:-defaultHandler}"
 
 # Loop to handle multiple invocations
 while true; do
@@ -17,7 +17,7 @@ while true; do
 
   # ==== Git Logic Starts Here ====
 
-  REPO="https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git"
+  REPO="https://${GITHUB_TOKEN}@github.com/carlosengels/daily_counter.git"
   DIR="/tmp/repo"
   COUNTER_FILE="files/counter.txt"
 
