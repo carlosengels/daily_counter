@@ -15,7 +15,7 @@ while true; do
 
   echo "[$(date)] Handling request $REQUEST_ID"
 
-  # ==== Your Git Logic Starts Here ====
+  # ==== Git Logic Starts Here ====
 
   REPO="https://${GITHUB_TOKEN}@github.com/YOUR_USERNAME/YOUR_REPO.git"
   DIR="/tmp/repo"
