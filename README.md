@@ -20,15 +20,15 @@ Runs on a custom Docker image, pushed to ECR, and triggered by EventBridge Sched
 
 Tech highlights:
 
-al2023 Lambda runtime (provided.al2023)
+- al2023 Lambda runtime (provided.al2023)
 
-Git installed via dnf
+- Git installed via dnf
 
-Custom bootstrap script to handle event loop
+- Custom bootstrap script to handle event loop
 
-IAM Role with lambda:InvokeFunction permissions
-s
-Schedule defined using aws scheduler create-schedule
+- IAM Role with lambda:InvokeFunction permissions
+
+- Schedule defined using aws scheduler create-schedule
 
 ⏱️ Note: Lambda timeout needed to be increased from 3 seconds to 1 minute to allow for git clone, commit, and push.
 
