@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Lambda with EventBridge Scheduler and all required permissions
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Default: daily-updater
+  LambdaImageUri:
+    Type: String
+    ### Add account number below
+    Description: ECR image URI for the Lambda (e.g. <ACCOUNT-ID>.dkr.ecr.us-west-2.amazonaws.com/lambda-git-update:latest)
+  ScheduleName:
+    Type: String
+    Default: daily-github-update
+  ScheduleExpression:
+    Type: String
+    Default: cron(15 15 * * ? *)
+
+Resources:
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: lambda-git-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowCloudWatchLogs
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  GitUpdateFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Role: !GetAtt LambdaExecutionRole.Arn
+      PackageType: Image
+      Code:
+        ImageUri: !Ref LambdaImageUri
+      Timeout: 60
+      MemorySize: 128
+
+  SchedulerExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: eventbridge-scheduler-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowLambdaInvoke
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: !GetAtt GitUpdateFunction.Arn
+        - PolicyName: AllowSecretsManager
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:GitHubToken-*
+
+
+  GitUpdateSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: !Ref ScheduleName
+      ScheduleExpression: !Ref ScheduleExpression
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      Target:
+        Arn: !GetAtt GitUpdateFunction.Arn
+        RoleArn: !GetAtt SchedulerExecutionRole.Arn
+        Input: "{}"
+        RetryPolicy:
+          MaximumRetryAttempts: 0
+
+Outputs:
+  LambdaFunctionArn:
+    Description: ARN of the deployed Lambda function
+    Value: !GetAtt GitUpdateFunction.Arn
+
+  SchedulerName:
+    Description: Name of the EventBridge schedule
+    Value: !Ref GitUpdateSchedule
