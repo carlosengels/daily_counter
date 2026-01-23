@@ -1,5 +1,7 @@
 # GitHub Streak Updater
 
+As of 1/22/2026 I'm disabling this experiment.
+
 A simple automation that updates a counter.txt file daily and pushes the change to GitHub — keeping activity streaks alive.
 
 Runs on a custom Docker image on Lambda, pushed to ECR, and triggered by EventBridge Scheduler.
